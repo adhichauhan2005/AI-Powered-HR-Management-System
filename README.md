@@ -381,21 +381,125 @@ Risk-ranked employees
 * RAG required ChromaDB indexing
 * Orchestrator routing needed correction for policy/privacy questions
 
----
+## Week 5 Industry-Level Improvements
 
-## Future Enhancements
+This project was enhanced with additional industry-level features to make the AI HR system more configurable, testable, and user-friendly.
 
-* Add frontend employee portal
-* Add user login and authentication
-* Add role-based access control
-* Add admin dashboard
-* Add more HR policy documents
-* Improve Llama SQL accuracy
-* Add charts and visual analytics
-* Deploy the system to cloud
-* Add logging and monitoring
+### New Features Added
 
----
+* YAML-based configuration
+* Separate environment configs for dev, test, and prod
+* SQL Agent training moved to YAML
+* Fallback handling for unmatched questions
+* Feedback system for correct, wrong, and needs-improvement responses
+* Prompt discovery for failed or incorrect prompts
+* Auto-fix suggestion flow for improving SQL Agent YAML training
+* Regression testing to ensure old working questions do not break
+* Simple frontend UI for asking HR questions and submitting feedback
+
+### YAML Configuration
+
+The project now uses YAML files to manage environment-specific settings and SQL Agent training data.
+
+```text
+config/
+├── config_dev.yaml
+├── config_test.yaml
+├── config_prod.yaml
+└── sql_agent_training.yaml
+```
+
+This makes the system easier to update without changing core Python code.
+
+### Feedback and Prompt Discovery
+
+Users can submit feedback when an answer is correct, wrong, or needs improvement. Feedback is saved in JSONL logs and can be reviewed later for improving prompts and YAML training examples.
+
+```text
+POST /feedback
+GET /feedback/recent
+GET /prompt-discovery/failed-prompts
+```
+
+### Auto-Fix Suggestion Flow
+
+The system can suggest safe fixes for failed SQL prompts by recommending which YAML intent should be updated.
+
+```text
+GET /autofix/suggestions
+POST /autofix/apply
+```
+
+Auto-fix only adds new example questions to YAML training. It does not modify SQL queries automatically.
+
+### Regression Testing
+
+Regression tests were added to verify that existing working questions continue to route correctly after changes.
+
+```text
+tests/
+├── regression_prompts.yaml
+└── run_regression_tests.py
+```
+
+Run tests using:
+
+```bash
+python tests/run_regression_tests.py
+```
+
+### Frontend UI
+
+A simple frontend was added where users can:
+
+* Type HR questions
+* Choose agent mode
+* View clean results
+* View raw JSON response
+* Submit feedback
+
+```text
+frontend/
+├── index.html
+├── styles.css
+└── app.js
+```
+
+Run the frontend locally:
+
+```bash
+cd frontend
+python -m http.server 5500
+```
+
+Open:
+
+```text
+http://127.0.0.1:5500
+```
+
+### Final System Flow
+
+```text
+User UI
+   ↓
+FastAPI Backend
+   ↓
+LangGraph Orchestrator
+   ↓
+SQL Agent | RAG Agent | Analytics Agent
+   ↓
+MySQL | ChromaDB + Llama | pandas + scikit-learn
+   ↓
+Final Response
+   ↓
+Feedback + Audit Logs
+   ↓
+Prompt Discovery + Auto-Fix Suggestions
+   ↓
+Regression Testing
+```
+
 
 ## Conclusion
 
