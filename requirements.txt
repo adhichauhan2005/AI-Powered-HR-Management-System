@@ -9,3 +9,5 @@ chromadb
 unstructured
 langgraph
 scikit-learn
+requests
+PyYAML

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-Powered HR Management System</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-container">
+      <header class="header">
+        <h1>AI-Powered HR Management System</h1>
+        <p>
+          Ask HR questions and route them to SQL, RAG, Analytics, or LangGraph
+          Orchestrator.
+        </p>
+      </header>
+
+      <main class="main-card">
+        <section class="input-section">
+          <label for="agentMode">Choose Agent Mode</label>
+          <select id="agentMode">
+            <option value="auto">Auto Routing - LangGraph Orchestrator</option>
+            <option value="sql">SQL Agent</option>
+            <option value="rag">RAG Agent</option>
+            <option value="analytics_attendance">
+              Analytics - Attendance Risk
+            </option>
+            <option value="analytics_payroll">
+              Analytics - Payroll Anomalies
+            </option>
+            <option value="analytics_scorecard">
+              Analytics - Department Scorecard
+            </option>
+          </select>
+
+          <label for="questionInput">Enter Question</label>
+          <textarea
+            id="questionInput"
+            rows="4"
+            placeholder="Example: Show me total number of employees?"
+          ></textarea>
+
+          <div class="button-row">
+            <button id="submitButton" onclick="askQuestion()">
+              Ask Question
+            </button>
+            <button class="secondary-button" onclick="clearResult()">
+              Clear
+            </button>
+          </div>
+        </section>
+
+        <section class="examples-section">
+          <h3>Demo Questions</h3>
+          <div class="example-buttons">
+            <button onclick="setExample('Show me total number of employees?')">
+              Total Employees
+            </button>
+            <button onclick="setExample('Show employee count by department')">
+              Department Count
+            </button>
+            <button onclick="setExample('Who can access payroll information?')">
+              Payroll Access Policy
+            </button>
+            <button
+              onclick="setExample('Which employees have attendance risk?')"
+            >
+              Attendance Risk
+            </button>
+          </div>
+        </section>
+
+        <section class="result-section">
+          <h3>Result</h3>
+          <div id="statusMessage" class="status-message">
+            No request submitted yet.
+          </div>
+
+          <div id="cleanResult" class="clean-result"></div>
+
+          <details class="raw-json-box">
+            <summary>View Raw JSON Response</summary>
+            <pre id="rawJsonOutput"></pre>
+          </details>
+        </section>
+
+        <section class="feedback-section">
+          <h3>Feedback</h3>
+          <p>Was this response useful?</p>
+
+          <div class="button-row">
+            <button onclick="submitFeedback('correct')">Correct</button>
+            <button onclick="submitFeedback('wrong')">Wrong</button>
+            <button onclick="submitFeedback('needs_improvement')">
+              Needs Improvement
+            </button>
+          </div>
+
+          <textarea
+            id="feedbackComment"
+            rows="3"
+            placeholder="Optional comment: What should be improved?"
+          ></textarea>
+
+          <div id="feedbackStatus" class="feedback-status"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

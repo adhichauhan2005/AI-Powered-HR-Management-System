@@ -5,3 +5,6 @@ __pycache__/
 chroma_db/
 .DS_Store
 .vscode/
+logs/*.jsonl
+logs/regression_report.json
+config/*_backup_*.yaml

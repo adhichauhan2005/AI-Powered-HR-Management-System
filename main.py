@@ -23,6 +23,10 @@ from routers.sql_agent_llama import (
 from routers.rag_agent import router as rag_agent_router
 from routers.orchestrator import router as orchestrator_router
 from routers.analytics_agent import router as analytics_agent_router
+from routers.feedback import router as feedback_router
+from routers.prompt_discovery import router as prompt_discovery_router
+from fastapi.middleware.cors import CORSMiddleware
+from routers.autofix import router as autofix_router
 
 # ---------------------------------------------------------
 # CREATE THE FASTAPI APPLICATION
@@ -36,6 +40,19 @@ app = FastAPI(
     version="1.0.0",
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://127.0.0.1:5500",
+        "http://localhost:5500",
+        "http://127.0.0.1:3000",
+        "http://localhost:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(departments_router)
 app.include_router(employee_records_router)
 app.include_router(employee_development_router)
@@ -44,6 +61,9 @@ app.include_router(sql_agent_llama_router)
 app.include_router(rag_agent_router)
 app.include_router(orchestrator_router)
 app.include_router(analytics_agent_router)
+app.include_router(feedback_router)
+app.include_router(prompt_discovery_router)
+app.include_router(autofix_router)
 # ---------------------------------------------------------
 # RESPONSE MODEL
 # ---------------------------------------------------------

@@ -1,0 +1,53 @@
+intents:
+  total_employees:
+    description: Total number of employees
+    examples:
+      - Show me total number of employees
+      - Show me total number of employees?
+      - How many employees are there?
+      - What is the total employee count?
+      - Count all employees
+      - Total employees
+    sql: |
+      SELECT COUNT(*) AS total_employees
+      FROM Employee;
+
+  department_employee_count:
+    description: Employee count by department
+    examples:
+      - Show employee count by department
+      - How many employees are in each department?
+      - Department wise employee count
+      - Count employees by department
+    sql: |
+      SELECT 
+          d.department_name,
+          COUNT(e.employee_id) AS employee_count
+      FROM Department d
+      LEFT JOIN Employee e
+          ON d.department_id = e.department_id
+      GROUP BY d.department_name
+      ORDER BY employee_count DESC;
+
+  highest_overtime:
+    description: Employees with highest overtime
+    examples:
+      - Which employees have highest overtime?
+      - Show top overtime employees
+      - Employees with most overtime hours
+    sql: |
+      SELECT 
+          e.employee_id,
+          e.first_name,
+          e.last_name,
+          SUM(a.overtime_hours) AS total_overtime_hours
+      FROM Employee e
+      JOIN Attendance a
+          ON e.employee_id = a.employee_id
+      GROUP BY e.employee_id, e.first_name, e.last_name
+      ORDER BY total_overtime_hours DESC
+      LIMIT 10;
+
+fallback:
+  enabled: true
+  message: I could not confidently match your question to a trained SQL intent. Please rephrase or ask a specific HR database question.

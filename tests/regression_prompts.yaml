@@ -1,0 +1,42 @@
+tests:
+  - test_name: total_employees_sql
+    question: Show me total number of employees?
+    expected_agent: sql
+    expected_answer_type: structured_database_answer
+    expected_contains:
+      - total_employees
+
+  - test_name: department_count_sql
+    question: Show employee count by department
+    expected_agent: sql
+    expected_answer_type: structured_database_answer
+    expected_contains:
+      - department
+
+  - test_name: payroll_access_rag
+    question: Who can access payroll information?
+    expected_agent: rag
+    expected_answer_type: policy_document_answer
+    expected_contains:
+      - payroll
+
+  - test_name: leave_policy_rag
+    question: What is the leave approval policy?
+    expected_agent: rag
+    expected_answer_type: policy_document_answer
+    expected_contains:
+      - leave
+
+  - test_name: attendance_risk_analytics
+    question: Which employees have attendance risk?
+    expected_agent: analytics
+    expected_answer_type: analytics_answer
+    expected_contains:
+      - attendance_risk
+
+  - test_name: department_scorecard_analytics
+    question: Show department scorecard
+    expected_agent: analytics
+    expected_answer_type: analytics_answer
+    expected_contains:
+      - department_scorecard
