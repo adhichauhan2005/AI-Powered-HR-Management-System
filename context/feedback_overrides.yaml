@@ -1,0 +1,62 @@
+version: 1
+description: 'Approved corrections learned from explicit user feedback.
+
+  '
+overrides:
+- question: What does the internal probation period mean?
+  normalized_question: what does the internal probation period mean
+  expected_answer: The probation period is the initial employee evaluation period
+    defined by the organization's approved HR policy.
+  correction:
+    preferred_route: rag
+    comment: Use the approved corrected answer.
+  status: approved
+  created_at: '2026-07-18T09:56:54.090507+00:00'
+  updated_at: '2026-07-18T09:56:54.090507+00:00'
+- question: what is the policy low attendance?
+  normalized_question: what is the policy low attendance
+  expected_answer: People having low attendance will be subjected to HR review from
+    manager.
+  correction:
+    preferred_route: hr_agent
+    comment: People having low attendance will be subjected to HR review from manager.
+  status: approved
+  created_at: '2026-07-19T17:39:54.341757+00:00'
+  updated_at: '2026-07-19T17:39:54.341757+00:00'
+- question: which 1 employee has attendance risk?
+  normalized_question: which 1 employee has attendance risk
+  expected_answer: '1. Employee Id: 21 | Employee Code: EMP0021 | Employee Name: Noah
+    Taylor | Department Name: Sales | Total Attendance Days: 64 | Absent Days: 2.0
+    | Late Days: 13.0 | Total Late Minutes: 260.0 | Total Overtime Hours: 31.76 |
+    Average Work Hours: 8.17 | Absent Rate: 0.0312 | Late Rate: 0.2031 | Anomaly Label:
+    Anomaly | Anomaly Score: 0.0565 | Risk Rank: 1'
+  correction:
+    preferred_route: hr_agent
+    comment: '1. Employee Id: 21 | Employee Code: EMP0021 | Employee Name: Noah Taylor
+      | Department Name: Sales | Total Attendance Days: 64 | Absent Days: 2.0 | Late
+      Days: 13.0 | Total Late Minutes: 260.0 | Total Overtime Hours: 31.76 | Average
+      Work Hours: 8.17 | Absent Rate: 0.0312 | Late Rate: 0.2031 | Anomaly Label:
+      Anomaly | Anomaly Score: 0.0565 | Risk Rank: 1'
+  status: approved
+  created_at: '2026-07-19T17:46:18.206127+00:00'
+  updated_at: '2026-07-19T17:46:18.206127+00:00'
+- question: Which employee has most skills?
+  normalized_question: which employee has most skills
+  expected_answer: '1. Employee Id: 33 | Employee Name: Rahul Chandra | Department
+    Name: Data Analytics | Total Skills: 5 | Avg Experience Years: 0.7'
+  correction:
+    preferred_route: hr_agent
+    comment: '1. Employee Id: 33 | Employee Name: Rahul Chandra | Department Name:
+      Data Analytics | Total Skills: 5 | Avg Experience Years: 0.7'
+  status: approved
+  created_at: '2026-07-19T18:16:34.737695+00:00'
+  updated_at: '2026-07-19T18:16:34.737695+00:00'
+- question: what is the policy for low attendance?
+  normalized_question: what is the policy for low attendance
+  expected_answer: Manager review
+  correction:
+    preferred_route: hr_agent
+    comment: Manager review
+  status: approved
+  created_at: '2026-07-19T18:17:43.300572+00:00'
+  updated_at: '2026-07-19T18:17:43.300572+00:00'

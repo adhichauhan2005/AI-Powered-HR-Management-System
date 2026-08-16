@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A friendly AI-powered HR assistant for employee, payroll, attendance, department, and policy questions."
+    />
+    <title>HR Agent</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="background-orb orb-one" aria-hidden="true"></div>
+    <div class="background-orb orb-two" aria-hidden="true"></div>
+
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="HR Agent home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path
+                d="M8.5 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm7-1a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM2.8 19.5c0-3.1 2.55-5.6 5.7-5.6s5.7 2.5 5.7 5.6c0 .28-.22.5-.5.5H3.3a.5.5 0 0 1-.5-.5Zm12.15.5h5.75a.5.5 0 0 0 .5-.5c0-2.75-2.2-5-5-5-.62 0-1.22.12-1.77.32a7.25 7.25 0 0 1 1.08 3.81c0 .48-.2.95-.56 1.37Z"
+              />
+            </svg>
+          </span>
+
+          <span class="brand-copy">
+            <strong>HR Agent</strong>
+            <small>Your workplace assistant</small>
+          </span>
+        </a>
+
+        <div class="topbar-actions">
+          <div class="connection-pill" id="connectionPill">
+            <span class="connection-dot" id="connectionDot"></span>
+            <span id="connectionText">Connecting…</span>
+          </div>
+
+          <button
+            class="icon-button mobile-history-button"
+            id="mobileHistoryButton"
+            type="button"
+            aria-label="Open conversation history"
+            aria-controls="historyPanel"
+            aria-expanded="false"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 5h16M4 12h16M4 19h10" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="side-panel history-panel" id="historyPanel">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">Your workspace</span>
+              <h2>Conversations</h2>
+            </div>
+
+            <button
+              class="icon-button close-history-button"
+              id="closeHistoryButton"
+              type="button"
+              aria-label="Close conversation history"
+            >
+              ×
+            </button>
+          </div>
+
+          <button
+            class="new-session-button"
+            id="newSessionButton"
+            type="button"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            Start a new conversation
+          </button>
+
+          <div class="history-heading">
+            <span>Current session</span>
+            <span class="count-badge" id="historyCount">0</span>
+          </div>
+
+          <nav
+            class="history-list"
+            id="historyList"
+            aria-label="Question history"
+          >
+            <div class="empty-state compact-empty">
+              <span class="empty-icon" aria-hidden="true">✦</span>
+              <p>Your recent questions will appear here.</p>
+            </div>
+          </nav>
+
+          <div class="history-footer">
+            <button class="quiet-button" id="clearSessionButton" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13" />
+              </svg>
+              Clear this session
+            </button>
+
+            <p>History is saved securely for this session.</p>
+          </div>
+        </aside>
+
+        <section class="chat-panel" aria-label="HR Agent conversation">
+          <div class="chat-heading">
+            <div class="agent-identity">
+              <span class="agent-avatar" aria-hidden="true">HR</span>
+              <span>
+                <strong>HR Agent</strong>
+                <small><span class="live-dot"></span> Ready to help</small>
+              </span>
+            </div>
+
+            <button
+              class="suggestions-toggle"
+              id="suggestionsToggle"
+              type="button"
+              aria-controls="suggestionsPanel"
+              aria-expanded="false"
+            >
+              Suggestions
+            </button>
+          </div>
+
+          <div class="messages" id="messages" aria-live="polite"></div>
+
+          <div
+            class="typing-row hidden"
+            id="typingIndicator"
+            aria-label="HR Agent is typing"
+          >
+            <span class="typing-avatar">HR</span>
+            <span class="typing-bubble"> <i></i><i></i><i></i> </span>
+            <span>Finding the best answer…</span>
+          </div>
+
+          <div class="composer-wrap">
+            <form class="composer" id="questionForm">
+              <label class="sr-only" for="questionInput"
+                >Ask an HR question</label
+              >
+              <textarea
+                id="questionInput"
+                rows="1"
+                maxlength="1000"
+                placeholder="Ask about employees, payroll, attendance, policies…"
+                required
+              ></textarea>
+
+              <button
+                class="send-button"
+                id="sendButton"
+                type="submit"
+                aria-label="Send question"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m4 4 17 8-17 8 3-8-3-8Zm3 8h14" />
+                </svg>
+              </button>
+            </form>
+
+            <p class="composer-hint">
+              Press <kbd>Enter</kbd> to send · <kbd>Shift</kbd> +
+              <kbd>Enter</kbd> for a new line
+            </p>
+          </div>
+        </section>
+
+        <aside class="side-panel suggestions-panel" id="suggestionsPanel">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">Need inspiration?</span>
+              <h2>Things you can ask</h2>
+            </div>
+
+            <button
+              class="icon-button close-suggestions-button"
+              id="closeSuggestionsButton"
+              type="button"
+              aria-label="Close suggestions"
+            >
+              ×
+            </button>
+          </div>
+
+          <p class="panel-description">
+            Choose a suggestion or write your question in your own words.
+          </p>
+
+          <div class="suggestion-list" id="suggestionList">
+            <div class="suggestion-skeleton"></div>
+            <div class="suggestion-skeleton"></div>
+            <div class="suggestion-skeleton"></div>
+          </div>
+
+          <div class="privacy-note">
+            <span class="privacy-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 3 5 6v5c0 4.7 2.9 8.3 7 10 4.1-1.7 7-5.3 7-10V6l-7-3Zm-3 9 2 2 4-4"
+                />
+              </svg>
+            </span>
+            <span>
+              <strong>Helpful and focused</strong>
+              <small
+                >Answers use the HR information available to this system.</small
+              >
+            </span>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <div class="mobile-backdrop" id="mobileBackdrop" aria-hidden="true"></div>
+    <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

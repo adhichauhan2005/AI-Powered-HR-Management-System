@@ -1,0 +1,675 @@
+# =============================================================
+# SQL Agent Training Data
+# =============================================================
+# This file teaches the SQL Agent to match user questions
+# to safe, pre-built SQL templates.
+#
+# 4 Major Topic Areas:
+#   1. Employee & Department Information
+#   2. Payroll & Salary
+#   3. Attendance & Leave
+#   4. Performance, Training & Skills
+# =============================================================
+
+intents:
+
+  # -----------------------------------------------------------
+  # 1. EMPLOYEE & DEPARTMENT INFORMATION
+  # -----------------------------------------------------------
+
+  total_employees:
+    description: Total number of employees in the organization
+    examples:
+      - Show me total number of employees
+      - Show me total number of employees?
+      - How many employees are there?
+      - What is the total employee count?
+      - Count all employees
+      - Total employees
+      - How many employees do we have?
+      - Give me the employee count
+      - Total headcount
+      - What is our headcount?
+      - Number of employees in the company
+    sql: |
+      SELECT COUNT(*) AS total_employees
+      FROM Employee;
+
+  total_departments:
+    description: Total number of departments in the organization
+    examples:
+      - How many departments are there?
+      - Total number of departments
+      - Count all departments
+      - How many departments do we have?
+      - Total departments
+      - Show me department count
+      - Number of departments
+      - What is the total department count?
+      - List the number of departments
+      - How many departments exist?
+    sql: |
+      SELECT COUNT(*) AS total_departments
+      FROM Department;
+
+  list_departments:
+    description: List all department names
+    examples:
+      - List all departments
+      - Show me all departments
+      - What are the departments?
+      - Show department names
+      - Which departments exist?
+      - Give me all department names
+      - What departments do we have?
+      - Display all departments
+    sql: |
+      SELECT
+          department_id,
+          department_code,
+          department_name,
+          location,
+          department_status
+      FROM Department
+      ORDER BY department_id;
+
+  department_employee_count:
+    description: Employee count grouped by department
+    examples:
+      - Show employee count by department
+      - How many employees are in each department?
+      - Department wise employee count
+      - Count employees by department
+      - Employees per department
+      - Department headcount
+      - Show me department-wise headcount
+      - How many people in each department?
+      - Employee distribution by department
+      - Employee breakdown by department
+    sql: |
+      SELECT
+          d.department_name,
+          COUNT(e.employee_id) AS employee_count
+      FROM Department d
+      LEFT JOIN Employee e
+          ON d.department_id = e.department_id
+      GROUP BY d.department_name
+      ORDER BY employee_count DESC;
+
+  active_employees:
+    description: Count of active employees
+    examples:
+      - How many active employees are there?
+      - Count active employees
+      - Total active employees
+      - Show active employee count
+      - Number of active employees
+      - How many employees are currently active?
+    sql: |
+      SELECT COUNT(*) AS active_employees
+      FROM Employee
+      WHERE employee_status = 'Active';
+
+  inactive_employees:
+    description: Count of inactive or terminated employees
+    examples:
+      - How many inactive employees are there?
+      - Count inactive employees
+      - Terminated employees count
+      - How many employees have left?
+      - Show inactive employee count
+    sql: |
+      SELECT
+          employee_status,
+          COUNT(*) AS employee_count
+      FROM Employee
+      WHERE employee_status != 'Active'
+      GROUP BY employee_status;
+
+  employees_by_job_title:
+    description: Employee count grouped by job title
+    examples:
+      - Show employees by job title
+      - How many employees per job title?
+      - Employee count by role
+      - Job title distribution
+      - Count employees by job title
+      - How many employees in each role?
+      - Employee breakdown by job title
+    sql: |
+      SELECT
+          job_title,
+          COUNT(*) AS employee_count
+      FROM Employee
+      GROUP BY job_title
+      ORDER BY employee_count DESC;
+
+  list_employees:
+    description: List employees with basic information
+    examples:
+      - List all employees
+      - Show me all employees
+      - Show employee list
+      - Display all employees
+      - Give me the employee list
+      - Show employee names
+    sql: |
+      SELECT
+          e.employee_id,
+          e.employee_code,
+          CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+          e.job_title,
+          d.department_name,
+          e.employee_status
+      FROM Employee e
+      INNER JOIN Department d
+          ON e.department_id = d.department_id
+      ORDER BY e.employee_id
+      LIMIT 20;
+
+  department_budget:
+    description: Department budgets
+    examples:
+      - Show department budgets
+      - What is the budget for each department?
+      - Department wise budget
+      - Annual budget by department
+      - Which department has highest budget?
+      - Show me department annual budgets
+    sql: |
+      SELECT
+          department_name,
+          location,
+          annual_budget
+      FROM Department
+      ORDER BY annual_budget DESC;
+
+  department_managers:
+    description: Department managers
+    examples:
+      - Who manages each department?
+      - Show department managers
+      - List department heads
+      - Who are the department managers?
+      - Department manager list
+    sql: |
+      SELECT
+          d.department_name,
+          CONCAT(e.first_name, ' ', e.last_name) AS manager_name,
+          e.job_title
+      FROM Department d
+      LEFT JOIN Employee e
+          ON d.manager_employee_id = e.employee_id
+      ORDER BY d.department_name;
+
+
+  # -----------------------------------------------------------
+  # 2. PAYROLL & SALARY
+  # -----------------------------------------------------------
+
+  average_salary:
+    description: Average salary across all employees
+    examples:
+      - What is the average salary?
+      - Show average salary
+      - Average employee salary
+      - What is the mean salary?
+      - Average pay
+      - Show me the average net salary
+    sql: |
+      SELECT
+          ROUND(AVG(net_salary), 2) AS average_net_salary
+      FROM Payroll;
+
+  highest_salary:
+    description: Employees with highest salary
+    examples:
+      - Who has the highest salary?
+      - Show top salary employees
+      - Highest paid employees
+      - Show highest salary
+      - Top 10 highest salaries
+      - Who earns the most?
+      - Maximum salary
+      - Employees with highest pay
+    sql: |
+      SELECT
+          e.employee_id,
+          CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+          e.job_title,
+          d.department_name,
+          p.net_salary
+      FROM Payroll p
+      INNER JOIN Employee e ON p.employee_id = e.employee_id
+      INNER JOIN Department d ON e.department_id = d.department_id
+      ORDER BY p.net_salary DESC
+      LIMIT 10;
+
+  lowest_salary:
+    description: Employees with lowest salary
+    examples:
+      - Who has the lowest salary?
+      - Show lowest salary employees
+      - Lowest paid employees
+      - Minimum salary
+      - Employees with lowest pay
+      - Who earns the least?
+    sql: |
+      SELECT
+          e.employee_id,
+          CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+          e.job_title,
+          d.department_name,
+          p.net_salary
+      FROM Payroll p
+      INNER JOIN Employee e ON p.employee_id = e.employee_id
+      INNER JOIN Department d ON e.department_id = d.department_id
+      ORDER BY p.net_salary ASC
+      LIMIT 10;
+
+  salary_by_department:
+    description: Average salary by department
+    examples:
+      - Show average salary by department
+      - Department wise average salary
+      - Average pay per department
+      - Salary comparison by department
+      - Which department has highest average salary?
+      - Department salary summary
+    sql: |
+      SELECT
+          d.department_name,
+          COUNT(DISTINCT e.employee_id) AS employee_count,
+          ROUND(AVG(p.net_salary), 2) AS average_salary,
+          ROUND(MIN(p.net_salary), 2) AS min_salary,
+          ROUND(MAX(p.net_salary), 2) AS max_salary
+      FROM Department d
+      INNER JOIN Employee e ON d.department_id = e.department_id
+      INNER JOIN Payroll p ON e.employee_id = p.employee_id
+      GROUP BY d.department_name
+      ORDER BY average_salary DESC;
+
+  total_payroll_cost:
+    description: Total payroll cost for the organization
+    examples:
+      - What is the total payroll cost?
+      - Total salary expense
+      - Total payroll summary
+      - Show total payroll
+      - How much are we spending on salaries?
+      - Total compensation cost
+    sql: |
+      SELECT
+          COUNT(*) AS total_payroll_records,
+          ROUND(SUM(basic_salary), 2) AS total_basic_salary,
+          ROUND(SUM(bonus), 2) AS total_bonus,
+          ROUND(SUM(overtime_pay), 2) AS total_overtime_pay,
+          ROUND(SUM(deductions), 2) AS total_deductions,
+          ROUND(SUM(tax_amount), 2) AS total_tax,
+          ROUND(SUM(net_salary), 2) AS total_net_salary
+      FROM Payroll;
+
+  top_bonus_employees:
+    description: Employees who received highest bonuses
+    examples:
+      - Who got the highest bonus?
+      - Show top bonus employees
+      - Highest bonus recipients
+      - Top bonuses
+      - Employees with most bonus
+    sql: |
+      SELECT
+          e.employee_id,
+          CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+          d.department_name,
+          ROUND(SUM(p.bonus), 2) AS total_bonus
+      FROM Payroll p
+      INNER JOIN Employee e ON p.employee_id = e.employee_id
+      INNER JOIN Department d ON e.department_id = d.department_id
+      GROUP BY e.employee_id, e.first_name, e.last_name, d.department_name
+      ORDER BY total_bonus DESC
+      LIMIT 10;
+
+
+  # -----------------------------------------------------------
+  # 3. ATTENDANCE & LEAVE
+  # -----------------------------------------------------------
+
+  highest_overtime:
+    description: Employees with highest overtime hours
+    examples:
+      - Which employees have highest overtime?
+      - Show top overtime employees
+      - Employees with most overtime hours
+      - Who works the most overtime?
+      - Top overtime workers
+      - Highest overtime employees
+    sql: |
+      SELECT
+          e.employee_id,
+          CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+          d.department_name,
+          SUM(a.overtime_hours) AS total_overtime_hours
+      FROM Employee e
+      JOIN Attendance a
+          ON e.employee_id = a.employee_id
+      JOIN Department d
+          ON e.department_id = d.department_id
+      GROUP BY e.employee_id, e.first_name, e.last_name, d.department_name
+      ORDER BY total_overtime_hours DESC
+      LIMIT 10;
+
+  most_absent_employees:
+    description: Employees with the most absent days
+    examples:
+      - Which employees have the most absences?
+      - Show most absent employees
+      - Who has the most absent days?
+      - Top absent employees
+      - Employees with highest absenteeism
+      - Most absent staff
+    sql: |
+      SELECT
+          e.employee_id,
+          CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+          d.department_name,
+          SUM(CASE WHEN a.attendance_status = 'Absent' THEN 1 ELSE 0 END) AS absent_days
+      FROM Employee e
+      JOIN Attendance a ON e.employee_id = a.employee_id
+      JOIN Department d ON e.department_id = d.department_id
+      GROUP BY e.employee_id, e.first_name, e.last_name, d.department_name
+      ORDER BY absent_days DESC
+      LIMIT 10;
+
+  attendance_summary:
+    description: Overall attendance summary
+    examples:
+      - Show attendance summary
+      - Overall attendance report
+      - Attendance overview
+      - How is the overall attendance?
+      - Attendance statistics
+      - Give me attendance summary
+    sql: |
+      SELECT
+          attendance_status,
+          COUNT(*) AS total_days
+      FROM Attendance
+      GROUP BY attendance_status
+      ORDER BY total_days DESC;
+
+  late_employees:
+    description: Employees who are frequently late
+    examples:
+      - Which employees are frequently late?
+      - Show late employees
+      - Who comes late most often?
+      - Employees with most late arrivals
+      - Top late employees
+      - Most late minutes employees
+    sql: |
+      SELECT
+          e.employee_id,
+          CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+          d.department_name,
+          SUM(a.late_minutes) AS total_late_minutes,
+          COUNT(CASE WHEN a.late_minutes > 0 THEN 1 END) AS late_days
+      FROM Employee e
+      JOIN Attendance a ON e.employee_id = a.employee_id
+      JOIN Department d ON e.department_id = d.department_id
+      GROUP BY e.employee_id, e.first_name, e.last_name, d.department_name
+      HAVING total_late_minutes > 0
+      ORDER BY total_late_minutes DESC
+      LIMIT 10;
+
+  leave_requests_summary:
+    description: Summary of leave requests
+    examples:
+      - Show leave requests summary
+      - Leave request overview
+      - How many leave requests are there?
+      - Leave summary
+      - Leave request statistics
+      - Total leave requests
+    sql: |
+      SELECT
+          leave_type,
+          leave_status,
+          COUNT(*) AS request_count,
+          ROUND(AVG(total_days), 1) AS avg_days
+      FROM LeaveRequest
+      GROUP BY leave_type, leave_status
+      ORDER BY leave_type, leave_status;
+
+  pending_leave_requests:
+    description: Pending leave requests awaiting approval
+    examples:
+      - Show pending leave requests
+      - Which leave requests are pending?
+      - Pending leaves
+      - Unapproved leave requests
+      - Show me pending leave approvals
+    sql: |
+      SELECT
+          lr.leave_id,
+          CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+          d.department_name,
+          lr.leave_type,
+          lr.start_date,
+          lr.end_date,
+          lr.total_days,
+          lr.reason,
+          lr.request_date
+      FROM LeaveRequest lr
+      INNER JOIN Employee e ON lr.employee_id = e.employee_id
+      INNER JOIN Department d ON e.department_id = d.department_id
+      WHERE lr.leave_status = 'Pending'
+      ORDER BY lr.request_date DESC;
+
+  average_work_hours:
+    description: Average work hours per employee
+    examples:
+      - What is the average work hours?
+      - Show average working hours
+      - Average daily work hours
+      - How many hours do employees work on average?
+    sql: |
+      SELECT
+          ROUND(AVG(work_hours), 2) AS average_work_hours
+      FROM Attendance;
+
+
+  # -----------------------------------------------------------
+  # 4. PERFORMANCE, TRAINING & SKILLS
+  # -----------------------------------------------------------
+
+  top_performers:
+    description: Employees with highest performance ratings
+    examples:
+      - Who are the top performers?
+      - Show top performing employees
+      - Highest rated employees
+      - Best performance ratings
+      - Top 10 performers
+      - Employees with best ratings
+      - Show top performance reviews
+    sql: |
+      SELECT
+          e.employee_id,
+          CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+          d.department_name,
+          ROUND(AVG(pr.overall_rating), 2) AS average_rating
+      FROM PerformanceReview pr
+      INNER JOIN Employee e ON pr.employee_id = e.employee_id
+      INNER JOIN Department d ON e.department_id = d.department_id
+      GROUP BY e.employee_id, e.first_name, e.last_name, d.department_name
+      ORDER BY average_rating DESC
+      LIMIT 10;
+
+  lowest_performers:
+    description: Employees with lowest performance ratings
+    examples:
+      - Who are the lowest performers?
+      - Show underperforming employees
+      - Lowest rated employees
+      - Worst performance ratings
+      - Bottom performers
+    sql: |
+      SELECT
+          e.employee_id,
+          CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+          d.department_name,
+          ROUND(AVG(pr.overall_rating), 2) AS average_rating
+      FROM PerformanceReview pr
+      INNER JOIN Employee e ON pr.employee_id = e.employee_id
+      INNER JOIN Department d ON e.department_id = d.department_id
+      GROUP BY e.employee_id, e.first_name, e.last_name, d.department_name
+      ORDER BY average_rating ASC
+      LIMIT 10;
+
+  average_performance_rating:
+    description: Average performance rating across the organization
+    examples:
+      - What is the average performance rating?
+      - Show average rating
+      - Average employee rating
+      - Overall performance score
+      - Mean performance rating
+    sql: |
+      SELECT
+          ROUND(AVG(overall_rating), 2) AS average_overall_rating,
+          ROUND(AVG(goals_rating), 2) AS average_goals_rating,
+          ROUND(AVG(technical_rating), 2) AS average_technical_rating,
+          ROUND(AVG(communication_rating), 2) AS average_communication_rating,
+          ROUND(AVG(teamwork_rating), 2) AS average_teamwork_rating,
+          ROUND(AVG(leadership_rating), 2) AS average_leadership_rating
+      FROM PerformanceReview;
+
+  performance_by_department:
+    description: Average performance rating by department
+    examples:
+      - Show performance by department
+      - Department wise performance rating
+      - Which department has best performance?
+      - Performance comparison by department
+      - Department performance summary
+    sql: |
+      SELECT
+          d.department_name,
+          COUNT(DISTINCT e.employee_id) AS employees_reviewed,
+          ROUND(AVG(pr.overall_rating), 2) AS average_rating
+      FROM PerformanceReview pr
+      INNER JOIN Employee e ON pr.employee_id = e.employee_id
+      INNER JOIN Department d ON e.department_id = d.department_id
+      GROUP BY d.department_name
+      ORDER BY average_rating DESC;
+
+  promotion_recommended:
+    description: Employees recommended for promotion
+    examples:
+      - Which employees are recommended for promotion?
+      - Show promotion recommendations
+      - Who should be promoted?
+      - Promotion candidates
+      - List employees recommended for promotion
+    sql: |
+      SELECT
+          e.employee_id,
+          CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+          d.department_name,
+          e.job_title,
+          pr.overall_rating,
+          pr.review_date
+      FROM PerformanceReview pr
+      INNER JOIN Employee e ON pr.employee_id = e.employee_id
+      INNER JOIN Department d ON e.department_id = d.department_id
+      WHERE pr.promotion_recommended = 1
+      ORDER BY pr.overall_rating DESC;
+
+  training_summary:
+    description: Training completion summary
+    examples:
+      - Show training summary
+      - Training completion status
+      - How many trainings are completed?
+      - Training overview
+      - Training statistics
+      - Show training completion report
+    sql: |
+      SELECT
+          training_status,
+          COUNT(*) AS training_count,
+          ROUND(AVG(score), 2) AS average_score
+      FROM Training
+      GROUP BY training_status
+      ORDER BY training_count DESC;
+
+  training_by_department:
+    description: Training completion by department
+    examples:
+      - Show training by department
+      - Department wise training summary
+      - Which department has most training completions?
+      - Training completion per department
+    sql: |
+      SELECT
+          d.department_name,
+          COUNT(t.training_id) AS total_trainings,
+          SUM(CASE WHEN t.training_status = 'Completed' THEN 1 ELSE 0 END) AS completed,
+          SUM(CASE WHEN t.training_status = 'In Progress' THEN 1 ELSE 0 END) AS in_progress,
+          ROUND(AVG(t.score), 2) AS average_score
+      FROM Training t
+      INNER JOIN Employee e ON t.employee_id = e.employee_id
+      INNER JOIN Department d ON e.department_id = d.department_id
+      GROUP BY d.department_name
+      ORDER BY completed DESC;
+
+  certified_employees:
+    description: Employees with certifications
+    examples:
+      - Show certified employees
+      - Which employees have certifications?
+      - Certification status
+      - How many employees are certified?
+      - List certifications
+      - Employee certifications summary
+    sql: |
+      SELECT
+          e.employee_id,
+          CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+          d.department_name,
+          COUNT(c.certification_id) AS total_certifications,
+          SUM(CASE WHEN c.certification_status = 'Active' THEN 1 ELSE 0 END) AS active_certifications
+      FROM Certifications c
+      INNER JOIN Employee e ON c.employee_id = e.employee_id
+      INNER JOIN Department d ON e.department_id = d.department_id
+      GROUP BY e.employee_id, e.first_name, e.last_name, d.department_name
+      ORDER BY total_certifications DESC
+      LIMIT 15;
+
+  top_skilled_employees:
+    description: Employees with the most skills
+    examples:
+      - Who has the most skills?
+      - Show most skilled employees
+      - Top skilled employees
+      - Employees with most expertise
+      - Skill distribution by employee
+    sql: |
+      SELECT
+          e.employee_id,
+          CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+          d.department_name,
+          COUNT(s.skill_record_id) AS total_skills,
+          ROUND(AVG(s.years_experience), 1) AS avg_experience_years
+      FROM Skills s
+      INNER JOIN Employee e ON s.employee_id = e.employee_id
+      INNER JOIN Department d ON e.department_id = d.department_id
+      GROUP BY e.employee_id, e.first_name, e.last_name, d.department_name
+      ORDER BY total_skills DESC
+      LIMIT 10;
+
+
+fallback:
+  enabled: true
+  message: I could not confidently match your question to a trained SQL intent. Please rephrase or ask a specific HR database question.

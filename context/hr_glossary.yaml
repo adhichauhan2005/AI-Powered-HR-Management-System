@@ -1,0 +1,727 @@
+version: 1
+
+description: >
+  Canonical HR vocabulary used by the context layer before
+  the question is sent to SQL, RAG, or Analytics agents.
+
+terms:
+  employee:
+    aliases:
+      - employee
+      - employees
+      - emp
+      - worker
+      - workers
+      - staff
+      - staff member
+      - team member
+
+    meaning: >
+      A person employed by the organization.
+
+    entity_type: employee
+    table: Employee
+    key_column: employee_id
+    route: sql
+
+    examples:
+      - Show all employees.
+      - Show me the total number of employees.
+      - How many staff members are active?
+      - Find employee EMP0012.
+
+  department:
+    aliases:
+      - department
+      - departments
+      - dept
+      - division
+      - business unit
+      - team
+
+    meaning: >
+      An organizational unit containing employees.
+
+    entity_type: department
+    table: Department
+    key_column: department_id
+    route: sql
+
+    examples:
+      - Show employee count by department.
+      - Which department has the most employees?
+      - Show employees in the Engineering department.
+
+  designation:
+    aliases:
+      - designation
+      - job title
+      - title
+      - role
+      - position
+      - occupation
+
+    meaning: >
+      The job title assigned to an employee.
+
+    entity_type: job_title
+    table: Employee
+    column: job_title
+    route: sql
+
+    examples:
+      - Show employees with the AI Engineer designation.
+      - What is Priya's job title?
+      - List all Software Engineers.
+
+  salary:
+    aliases:
+      - salary
+      - salaries
+      - pay
+      - base pay
+      - basic pay
+      - basic salary
+      - compensation
+      - earnings
+
+    meaning: >
+      The basic salary recorded for an employee during a
+      particular payroll period.
+
+    entity_type: payroll_measure
+    table: Payroll
+    column: basic_salary
+    route: sql
+
+    examples:
+      - Who has the lowest salary?
+      - Who has the highest salary?
+      - What is the salary of AI Engineers?
+      - Show the average salary by department.
+
+  payroll:
+    aliases:
+      - payroll
+      - pay slip
+      - payslip
+      - paycheck
+      - monthly pay
+      - salary payment
+
+    meaning: >
+      Salary, allowances, deductions, taxes and payment
+      information for an employee.
+
+    entity_type: payroll
+    table: Payroll
+    key_column: payroll_id
+    route: sql
+
+    examples:
+      - Show the latest payroll for EMP0012.
+      - What is the payroll cost by department?
+
+  gross_salary:
+    aliases:
+      - gross salary
+      - gross pay
+      - gross earnings
+      - earnings before deductions
+
+    meaning: >
+      Total employee earnings before taxes and deductions.
+
+    entity_type: payroll_measure
+    table: Payroll
+
+    calculation: >
+      basic_salary + housing_allowance +
+      other_allowances + bonus + overtime_pay
+
+    route: sql
+
+    examples:
+      - Show the gross salary for EMP0012.
+
+  net_salary:
+    aliases:
+      - net salary
+      - net pay
+      - take home pay
+      - take-home pay
+
+    meaning: >
+      The salary amount remaining after taxes and deductions.
+
+    entity_type: payroll_measure
+    table: Payroll
+    column: net_salary
+    route: sql
+
+    examples:
+      - What is EMP0012's latest net salary?
+
+  deduction:
+    aliases:
+      - deduction
+      - deductions
+      - payroll deduction
+      - withheld amount
+
+    meaning: >
+      An amount subtracted from an employee's payroll.
+
+    entity_type: payroll_measure
+    table: Payroll
+    column: deductions
+    route: sql
+
+    examples:
+      - Which employee has the highest deductions?
+
+  bonus:
+    aliases:
+      - bonus
+      - bonuses
+      - incentive
+      - incentive pay
+      - variable pay
+
+    meaning: >
+      Additional compensation recorded separately from
+      basic salary.
+
+    entity_type: payroll_measure
+    table: Payroll
+    column: bonus
+    route: sql
+
+    examples:
+      - Show bonuses paid in the latest payroll period.
+
+  allowance:
+    aliases:
+      - allowance
+      - allowances
+      - housing allowance
+      - other allowance
+
+    meaning: >
+      An additional payroll amount provided for a specific
+      purpose.
+
+    entity_type: payroll_measure
+    table: Payroll
+
+    columns:
+      - housing_allowance
+      - other_allowances
+
+    route: sql
+
+    examples:
+      - What allowances are recorded for EMP0012?
+
+  pay_period:
+    aliases:
+      - pay period
+      - payroll period
+      - salary month
+      - payment period
+
+    meaning: >
+      The date range covered by one payroll record.
+
+    entity_type: payroll_period
+    table: Payroll
+
+    columns:
+      - pay_period_start
+      - pay_period_end
+
+    route: sql
+
+    examples:
+      - Show the latest payroll period.
+
+  attendance:
+    aliases:
+      - attendance
+      - present
+      - absent
+      - absence
+      - attendance record
+      - working hours
+
+    meaning: >
+      Daily employee presence, absence and working-hour
+      information.
+
+    entity_type: attendance
+    table: Attendance
+    key_column: attendance_id
+    route: sql
+
+    examples:
+      - Which employees were absent?
+      - Show attendance for EMP0012.
+
+  lateness:
+    aliases:
+      - late
+      - lateness
+      - late arrival
+      - late arrivals
+      - delayed arrival
+
+    meaning: >
+      Employee arrival after the expected start time.
+
+    entity_type: attendance_measure
+    table: Attendance
+    column: late_minutes
+    route: sql
+
+    examples:
+      - Which employees were late more than three times?
+
+  absenteeism:
+    aliases:
+      - absenteeism
+      - absence rate
+      - frequent absence
+      - repeated absence
+
+    meaning: >
+      A measure or pattern of employee absences during a
+      defined period.
+
+    entity_type: analytics_measure
+    table: Attendance
+    route: analytics
+
+    examples:
+      - Which employees show unusual absenteeism?
+
+  overtime:
+    aliases:
+      - overtime
+      - overtime hours
+      - extra hours
+      - overtime pay
+
+    meaning: >
+      Hours or compensation recorded beyond the normal
+      working schedule.
+
+    entity_type: attendance_payroll_measure
+
+    tables:
+      - Attendance
+      - Payroll
+
+    route: sql
+
+    examples:
+      - Who worked the most overtime?
+      - Who received the highest overtime pay?
+
+  leave:
+    aliases:
+      - leave
+      - time off
+      - vacation
+      - sick leave
+      - parental leave
+      - maternity leave
+      - paternity leave
+
+    meaning: >
+      A request or policy for approved time away from work.
+
+    entity_type: leave
+    structured_table: LeaveRequest
+    policy_route: rag
+
+    examples:
+      - How many leave days has EMP0012 used?
+      - What is the maternity leave policy?
+
+  leave_balance:
+    aliases:
+      - leave balance
+      - remaining leave
+      - available leave
+      - unused leave
+
+    meaning: >
+      The number of leave days remaining after approved
+      leave usage.
+
+    entity_type: derived_measure
+    table: LeaveRequest
+    route: sql
+
+    examples:
+      - What is the remaining leave balance for EMP0012?
+
+  performance:
+    aliases:
+      - performance
+      - performance review
+      - appraisal
+      - rating
+      - review score
+
+    meaning: >
+      An employee performance evaluation and rating.
+
+    entity_type: performance
+    table: PerformanceReview
+    route: sql
+
+    examples:
+      - Who has the highest performance rating?
+      - Show average performance by department.
+
+  training:
+    aliases:
+      - training
+      - course
+      - learning
+      - learning program
+      - upskilling
+
+    meaning: >
+      An employee learning or professional-development
+      activity.
+
+    entity_type: training
+    table: Training
+    route: sql
+
+    examples:
+      - Which employees completed Advanced SQL training?
+
+  certification:
+    aliases:
+      - certification
+      - certifications
+      - certificate
+      - credential
+      - professional license
+
+    meaning: >
+      A professional qualification or credential held by
+      an employee.
+
+    entity_type: certification
+    table: Certifications
+    route: sql
+
+    examples:
+      - Which certifications expire soon?
+
+  manager:
+    aliases:
+      - manager
+      - supervisor
+      - reporting manager
+      - boss
+
+    meaning: >
+      The employee responsible for supervising another
+      employee.
+
+    entity_type: employee_relationship
+    table: Employee
+    column: manager_id
+    route: sql
+
+    examples:
+      - Who is EMP0012's manager?
+
+  direct_report:
+    aliases:
+      - direct report
+      - direct reports
+      - reporting employee
+      - employees reporting to
+
+    meaning: >
+      An employee whose manager_id references a particular
+      manager.
+
+    entity_type: employee_relationship
+    table: Employee
+    column: manager_id
+    route: sql
+
+    examples:
+      - Show the direct reports of EMP0005.
+
+  employment_status:
+    aliases:
+      - employment status
+      - employee status
+      - active employee
+      - inactive employee
+      - terminated employee
+
+    meaning: >
+      The current status of an employee's relationship with
+      the organization.
+
+    entity_type: employee_attribute
+    table: Employee
+    column: employee_status
+    route: sql
+
+    examples:
+      - How many active employees are there?
+
+  employment_type:
+    aliases:
+      - employment type
+      - full time
+      - full-time
+      - part time
+      - part-time
+      - temporary employee
+      - contract employee
+
+    meaning: >
+      The category describing an employee's working
+      arrangement.
+
+    entity_type: employee_attribute
+    table: Employee
+    column: employment_type
+    route: sql
+
+    examples:
+      - How many full-time employees are there?
+
+  hire_date:
+    aliases:
+      - hire date
+      - joining date
+      - start date
+      - date joined
+
+    meaning: >
+      The date on which an employee started employment.
+
+    entity_type: employee_attribute
+    table: Employee
+    column: hire_date
+    route: sql
+
+    examples:
+      - Which employees joined this year?
+
+  tenure:
+    aliases:
+      - tenure
+      - length of service
+      - years of service
+      - service duration
+
+    meaning: >
+      The amount of time that has passed since the
+      employee's hire date.
+
+    entity_type: derived_measure
+    table: Employee
+
+    calculation: >
+      Difference between the current date and hire_date
+
+    route: sql
+
+    examples:
+      - Who has the longest tenure?
+
+  headcount:
+    aliases:
+      - headcount
+      - employee count
+      - staff count
+      - workforce size
+      - number of employees
+
+    meaning: >
+      The total number of employees in a defined workforce
+      population.
+
+    entity_type: derived_measure
+    table: Employee
+
+    calculation: >
+      COUNT(DISTINCT employee_id)
+
+    route: sql
+
+    examples:
+      - What is the total headcount?
+      - Show headcount by department.
+
+  turnover:
+    aliases:
+      - turnover
+      - employee turnover
+      - attrition
+      - employee attrition
+      - separation rate
+
+    meaning: >
+      Employee departures measured for a defined population
+      and time period.
+
+    entity_type: analytics_measure
+    route: analytics
+
+    examples:
+      - What is the employee turnover rate?
+
+  onboarding:
+    aliases:
+      - onboarding
+      - employee onboarding
+      - new hire onboarding
+      - employee orientation
+
+    meaning: >
+      The process of introducing and preparing a new
+      employee for work.
+
+    entity_type: hr_process
+    route: rag
+
+    examples:
+      - What is the onboarding process?
+
+  offboarding:
+    aliases:
+      - offboarding
+      - employee exit
+      - separation process
+      - exit process
+
+    meaning: >
+      The process followed when an employee leaves the
+      organization.
+
+    entity_type: hr_process
+    route: rag
+
+    examples:
+      - What is the employee offboarding process?
+
+  promotion:
+    aliases:
+      - promotion
+      - promoted
+      - advancement
+      - higher role
+
+    meaning: >
+      Movement to a role with increased responsibility or
+      organizational level.
+
+    entity_type: job_change
+    structured_table: JobHistory
+    policy_route: rag
+
+    examples:
+      - Which employees were promoted?
+      - What is the promotion policy?
+
+  transfer:
+    aliases:
+      - transfer
+      - employee transfer
+      - department transfer
+      - internal move
+      - role transfer
+
+    meaning: >
+      A change in an employee's department, role or work
+      location.
+
+    entity_type: job_change
+    table: JobHistory
+    route: sql
+
+    examples:
+      - Which employees transferred departments?
+
+  benefit:
+    aliases:
+      - benefit
+      - benefits
+      - employee benefit
+      - fringe benefit
+      - insurance benefit
+
+    meaning: >
+      Non-wage compensation or an employment-related
+      program provided to eligible employees.
+
+    entity_type: employment_term
+    route: rag
+
+    examples:
+      - What benefits are available to employees?
+
+  exempt_employee:
+    aliases:
+      - exempt
+      - exempt employee
+      - salaried exempt
+
+    meaning: >
+      An employee excluded from specific wage or overtime
+      protections when the applicable legal requirements
+      are satisfied.
+
+    entity_type: employment_term
+    route: rag
+
+    examples:
+      - What does exempt employee mean?
+
+  nonexempt_employee:
+    aliases:
+      - nonexempt
+      - non-exempt
+      - nonexempt employee
+      - overtime eligible
+
+    meaning: >
+      An employee generally entitled to applicable
+      minimum-wage and overtime protections.
+
+    entity_type: employment_term
+    route: rag
+
+    examples:
+      - What does nonexempt employee mean?
+
+  independent_contractor:
+    aliases:
+      - independent contractor
+      - contractor
+      - freelancer
+      - freelance worker
+
+    meaning: >
+      A worker whose classification is determined by the
+      applicable control and employment-relationship tests.
+
+    entity_type: employment_term
+    route: rag
+
+    examples:
+      - What is the difference between an employee and an independent contractor?

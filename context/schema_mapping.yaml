@@ -1,0 +1,96 @@
+version: 1
+
+database:
+  name: HRManagementDB
+  dialect: mysql
+
+entities:
+  employee:
+    table: Employee
+    primary_key: employee_id
+
+    display_columns:
+      - employee_code
+      - first_name
+      - last_name
+      - job_title
+      - employee_status
+
+  department:
+    table: Department
+    primary_key: department_id
+
+    display_columns:
+      - department_name
+
+  payroll:
+    table: Payroll
+    primary_key: payroll_id
+    employee_key: employee_id
+
+    period_start_column: pay_period_start
+    period_end_column: pay_period_end
+
+    basic_salary_column: basic_salary
+    net_salary_column: net_salary
+
+    latest_record_order:
+      - pay_period_end DESC
+      - payroll_id DESC
+
+  attendance:
+    table: Attendance
+    primary_key: attendance_id
+    employee_key: employee_id
+
+  leave:
+    table: LeaveRequest
+    primary_key: leave_request_id
+    employee_key: employee_id
+
+  performance:
+    table: PerformanceReview
+    primary_key: performance_review_id
+    employee_key: employee_id
+
+  training:
+    table: Training
+    primary_key: training_id
+    employee_key: employee_id
+
+  certifications:
+    table: Certifications
+    primary_key: certification_id
+    employee_key: employee_id
+
+relationships:
+  employee_department:
+    left_column: Employee.department_id
+    right_column: Department.department_id
+
+  employee_payroll:
+    left_column: Employee.employee_id
+    right_column: Payroll.employee_id
+
+  employee_attendance:
+    left_column: Employee.employee_id
+    right_column: Attendance.employee_id
+
+semantic_mappings:
+  employee_name:
+    expression: >
+      CONCAT(Employee.first_name, ' ', Employee.last_name)
+
+  designation:
+    column: Employee.job_title
+
+  current_basic_salary:
+    column: Payroll.basic_salary
+    record_rule: latest_payroll_per_employee
+
+  current_net_salary:
+    column: Payroll.net_salary
+    record_rule: latest_payroll_per_employee
+
+  department_name:
+    column: Department.department_name

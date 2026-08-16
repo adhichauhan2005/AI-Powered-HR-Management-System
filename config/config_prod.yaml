@@ -1,0 +1,25 @@
+app:
+  name: AI-Powered HR Management System
+  environment: prod
+  debug: false
+
+api:
+  host: 0.0.0.0
+  port: 8000
+
+llm:
+  provider: ollama
+  model: llama3.2
+  base_url: http://127.0.0.1:11434
+
+rag:
+  collection_name: hr_policies
+  top_k: 5
+
+analytics:
+  attendance_contamination: 0.08
+  payroll_contamination: 0.05
+
+logging:
+  audit_log_path: logs/audit_log_prod.jsonl
+  feedback_log_path: logs/feedback_log_prod.jsonl

@@ -1,0 +1,245 @@
+attendance_risk: |
+  SELECT
+      e.employee_id,
+      e.employee_code,
+      CONCAT(
+          e.first_name,
+          ' ',
+          e.last_name
+      ) AS employee_name,
+      d.department_name,
+
+      COUNT(
+          a.attendance_id
+      ) AS total_attendance_days,
+
+      SUM(
+          CASE
+              WHEN a.attendance_status = 'Absent'
+              THEN 1
+              ELSE 0
+          END
+      ) AS absent_days,
+
+      SUM(
+          CASE
+              WHEN a.late_minutes > 0
+              THEN 1
+              ELSE 0
+          END
+      ) AS late_days,
+
+      ROUND(
+          SUM(a.late_minutes),
+          2
+      ) AS total_late_minutes,
+
+      ROUND(
+          SUM(a.overtime_hours),
+          2
+      ) AS total_overtime_hours,
+
+      ROUND(
+          AVG(a.work_hours),
+          2
+      ) AS average_work_hours
+
+  FROM Employee AS e
+
+  INNER JOIN Department AS d
+      ON e.department_id = d.department_id
+
+  LEFT JOIN Attendance AS a
+      ON e.employee_id = a.employee_id
+
+  GROUP BY
+      e.employee_id,
+      e.employee_code,
+      e.first_name,
+      e.last_name,
+      d.department_name
+
+  ORDER BY
+      e.employee_id;
+
+payroll_anomalies: |
+  SELECT
+      e.employee_id,
+      e.employee_code,
+
+      CONCAT(
+          e.first_name,
+          ' ',
+          e.last_name
+      ) AS employee_name,
+
+      d.department_name,
+      e.job_title,
+
+      COUNT(
+          p.payroll_id
+      ) AS payroll_records,
+
+      ROUND(
+          AVG(p.net_salary),
+          2
+      ) AS average_net_salary,
+
+      ROUND(
+          SUM(p.bonus),
+          2
+      ) AS total_bonus,
+
+      ROUND(
+          SUM(p.overtime_pay),
+          2
+      ) AS total_overtime_pay,
+
+      ROUND(
+          SUM(p.deductions),
+          2
+      ) AS total_deductions,
+
+      ROUND(
+          SUM(p.tax_amount),
+          2
+      ) AS total_tax_amount
+
+  FROM Employee AS e
+
+  INNER JOIN Department AS d
+      ON e.department_id = d.department_id
+
+  LEFT JOIN Payroll AS p
+      ON e.employee_id = p.employee_id
+
+  GROUP BY
+      e.employee_id,
+      e.employee_code,
+      e.first_name,
+      e.last_name,
+      d.department_name,
+      e.job_title
+
+  ORDER BY
+      e.employee_id;
+
+department_scorecard: |
+  WITH attendance_summary AS (
+      SELECT
+          employee_id,
+
+          COUNT(*) AS attendance_days,
+
+          SUM(
+              CASE
+                  WHEN attendance_status = 'Absent'
+                  THEN 1
+                  ELSE 0
+              END
+          ) AS absent_days,
+
+          SUM(
+              overtime_hours
+          ) AS overtime_hours
+
+      FROM Attendance
+
+      GROUP BY
+          employee_id
+  ),
+
+  payroll_summary AS (
+      SELECT
+          employee_id,
+
+          SUM(
+              net_salary
+          ) AS total_net_salary
+
+      FROM Payroll
+
+      GROUP BY
+          employee_id
+  ),
+
+  performance_summary AS (
+      SELECT
+          employee_id,
+
+          AVG(
+              overall_rating
+          ) AS average_rating
+
+      FROM PerformanceReview
+
+      GROUP BY
+          employee_id
+  ),
+
+  training_summary AS (
+      SELECT
+          employee_id,
+
+          SUM(
+              CASE
+                  WHEN training_status = 'Completed'
+                  THEN 1
+                  ELSE 0
+              END
+          ) AS completed_trainings
+
+      FROM Training
+
+      GROUP BY
+          employee_id
+  )
+
+  SELECT
+      d.department_id,
+      d.department_name,
+      e.employee_id,
+
+      COALESCE(
+          a.attendance_days,
+          0
+      ) AS attendance_days,
+
+      COALESCE(
+          a.absent_days,
+          0
+      ) AS absent_days,
+
+      COALESCE(
+          a.overtime_hours,
+          0
+      ) AS overtime_hours,
+
+      COALESCE(
+          p.total_net_salary,
+          0
+      ) AS total_net_salary,
+
+      ps.average_rating,
+
+      COALESCE(
+          t.completed_trainings,
+          0
+      ) AS completed_trainings
+
+  FROM Department AS d
+
+  LEFT JOIN Employee AS e
+      ON d.department_id = e.department_id
+
+  LEFT JOIN attendance_summary AS a
+      ON e.employee_id = a.employee_id
+
+  LEFT JOIN payroll_summary AS p
+      ON e.employee_id = p.employee_id
+
+  LEFT JOIN performance_summary AS ps
+      ON e.employee_id = ps.employee_id
+
+  LEFT JOIN training_summary AS t
+      ON e.employee_id = t.employee_id;

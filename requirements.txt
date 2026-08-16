@@ -1,0 +1,15 @@
+mysql-connector-python
+SQLAlchemy
+pandas
+python-dotenv
+fastapi
+uvicorn
+requests
+chromadb
+unstructured
+langgraph
+scikit-learn
+requests
+PyYAML
+redis
+python-dotenv

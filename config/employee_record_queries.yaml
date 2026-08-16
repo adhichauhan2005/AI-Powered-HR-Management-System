@@ -1,0 +1,105 @@
+employee_exists: |
+  SELECT employee_id
+  FROM Employee
+  WHERE employee_id = :employee_id;
+
+attendance: |
+  SELECT
+      a.attendance_id,
+      a.attendance_date,
+
+      TIME_FORMAT(
+          a.check_in_time,
+          '%H:%i:%s'
+      ) AS check_in_time,
+
+      TIME_FORMAT(
+          a.check_out_time,
+          '%H:%i:%s'
+      ) AS check_out_time,
+
+      a.work_hours,
+      a.attendance_status,
+      a.shift_name,
+      a.work_mode,
+      a.late_minutes,
+      a.overtime_hours,
+      a.remarks,
+      a.approved_by
+
+  FROM Attendance AS a
+
+  WHERE {where_clause}
+
+  ORDER BY
+      a.attendance_date DESC,
+      a.attendance_id DESC
+
+  LIMIT :limit
+  OFFSET :offset;
+
+payroll: |
+  SELECT
+      p.payroll_id,
+      p.pay_period_start,
+      p.pay_period_end,
+      p.basic_salary,
+      p.housing_allowance,
+      p.other_allowances,
+      p.bonus,
+      p.overtime_pay,
+      p.deductions,
+      p.tax_amount,
+      p.net_salary,
+      p.payment_date,
+      p.payment_method,
+      p.currency,
+      p.payroll_status
+
+  FROM Payroll AS p
+
+  WHERE p.employee_id = :employee_id
+
+  ORDER BY
+      p.pay_period_start DESC,
+      p.payroll_id DESC
+
+  LIMIT :limit
+  OFFSET :offset;
+
+leave_requests: |
+  SELECT
+      leave_record.leave_id,
+      leave_record.leave_type,
+      leave_record.start_date,
+      leave_record.end_date,
+      leave_record.total_days,
+      leave_record.reason,
+      leave_record.request_date,
+      leave_record.leave_status,
+      leave_record.approved_by,
+
+      CONCAT(
+          approver.first_name,
+          ' ',
+          approver.last_name
+      ) AS approver_name,
+
+      leave_record.approval_date,
+      leave_record.manager_comments,
+      leave_record.is_paid,
+      leave_record.contact_during_leave
+
+  FROM LeaveRequest AS leave_record
+
+  LEFT JOIN Employee AS approver
+      ON leave_record.approved_by = approver.employee_id
+
+  WHERE {where_clause}
+
+  ORDER BY
+      leave_record.request_date DESC,
+      leave_record.leave_id DESC
+
+  LIMIT :limit
+  OFFSET :offset;

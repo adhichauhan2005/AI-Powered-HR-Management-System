@@ -1,0 +1,21 @@
+services:
+  redis:
+    image: redis:7-alpine
+
+    container_name: hrms-redis
+
+    restart: unless-stopped
+
+    ports:
+      - "6379:6379"
+
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+
+    volumes:
+      - hrms_redis_data:/data
+
+volumes:
+  hrms_redis_data:

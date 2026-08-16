@@ -1,0 +1,31 @@
+version: 1
+
+groups:
+  Employee information:
+    - How many active employees are there?
+    - Show employee count by department.
+    - Who is EMP0012's manager?
+    - Which employees joined this year?
+
+  Payroll:
+    - Who has the lowest salary?
+    - Who has the highest salary?
+    - What is the salary of AI Engineers?
+    - What is the average salary by department?
+
+  Attendance and analytics:
+    - Which employees were late more than three times?
+    - Which employees have attendance risk?
+    - Show payroll anomalies.
+    - Show the department scorecard.
+
+  HR policies:
+    - What is the maternity leave policy?
+    - Who can access payroll information?
+    - What does nonexempt employee mean?
+    - What is the employee onboarding process?
+
+  Learning and performance:
+    - Which employees completed Advanced SQL training?
+    - Which certifications expire soon?
+    - Who has the highest performance rating?

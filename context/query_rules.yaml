@@ -1,0 +1,100 @@
+version: 1
+
+priority_order:
+  - approved_feedback_override
+  - deterministic_query_rule
+  - glossary_and_schema_mapping
+  - cached_question_pattern
+  - normal_orchestrator
+
+superlatives:
+  lowest:
+    aliases:
+      - lowest
+      - least
+      - minimum
+      - smallest
+
+    direction: ASC
+    result_limit: 1
+
+  highest:
+    aliases:
+      - highest
+      - most
+      - maximum
+      - largest
+
+    direction: DESC
+    result_limit: 1
+
+deterministic_rules:
+  lowest_salary_employee:
+    required_concepts:
+      - salary
+      - lowest
+
+    route: priority_sql
+    action: salary_superlative
+
+    parameters:
+      direction: ASC
+      result_limit: 1
+      use_latest_payroll: true
+
+  highest_salary_employee:
+    required_concepts:
+      - salary
+      - highest
+
+    route: priority_sql
+    action: salary_superlative
+
+    parameters:
+      direction: DESC
+      result_limit: 1
+      use_latest_payroll: true
+
+  salary_by_designation:
+    required_concepts:
+      - salary
+
+    requires_job_title: true
+
+    route: priority_sql
+    action: salary_by_job_title
+
+    parameters:
+      use_latest_payroll: true
+
+routing_words:
+  analytics:
+    - risk
+    - risky
+    - anomaly
+    - anomalies
+    - unusual
+    - outlier
+    - prediction
+    - scorecard
+    - analytics
+
+  rag:
+    - policy
+    - handbook
+    - eligible
+    - eligibility
+    - permitted
+    - privacy
+    - authorized
+    - guideline
+
+  sql:
+    - employee
+    - department
+    - salary
+    - payroll
+    - attendance
+    - count
+    - average
+    - total

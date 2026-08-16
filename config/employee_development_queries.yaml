@@ -1,0 +1,169 @@
+training: |
+  SELECT
+      t.training_id,
+      t.training_name,
+      t.provider,
+      t.training_category,
+      t.start_date,
+      t.end_date,
+      t.duration_hours,
+      t.delivery_mode,
+      t.training_cost,
+      t.training_status,
+      t.score,
+      t.certificate_issued,
+      t.trainer_name,
+      t.employee_feedback
+
+  FROM Training AS t
+
+  WHERE {where_clause}
+
+  ORDER BY
+      t.start_date DESC,
+      t.training_id DESC
+
+  LIMIT :limit
+  OFFSET :offset;
+
+performance_reviews: |
+  SELECT
+      pr.review_id,
+      pr.reviewer_id,
+
+      CONCAT(
+          reviewer.first_name,
+          ' ',
+          reviewer.last_name
+      ) AS reviewer_name,
+
+      pr.review_period_start,
+      pr.review_period_end,
+      pr.review_date,
+      pr.goals_rating,
+      pr.technical_rating,
+      pr.communication_rating,
+      pr.teamwork_rating,
+      pr.leadership_rating,
+      pr.overall_rating,
+      pr.strengths,
+      pr.improvement_areas,
+      pr.next_period_goals,
+      pr.promotion_recommended,
+      pr.review_status
+
+  FROM PerformanceReview AS pr
+
+  INNER JOIN Employee AS reviewer
+      ON pr.reviewer_id = reviewer.employee_id
+
+  WHERE {where_clause}
+
+  ORDER BY
+      pr.review_date DESC,
+      pr.review_id DESC
+
+  LIMIT :limit
+  OFFSET :offset;
+
+job_history: |
+  SELECT
+      jh.job_history_id,
+      jh.department_id,
+      d.department_name,
+      jh.job_title,
+      jh.start_date,
+      jh.end_date,
+      jh.employment_type,
+      jh.manager_id,
+
+      CONCAT(
+          manager.first_name,
+          ' ',
+          manager.last_name
+      ) AS manager_name,
+
+      jh.work_location,
+      jh.job_grade,
+      jh.annual_salary,
+      jh.change_reason,
+      jh.is_current
+
+  FROM JobHistory AS jh
+
+  INNER JOIN Department AS d
+      ON jh.department_id = d.department_id
+
+  LEFT JOIN Employee AS manager
+      ON jh.manager_id = manager.employee_id
+
+  WHERE {where_clause}
+
+  ORDER BY
+      jh.start_date DESC,
+      jh.job_history_id DESC
+
+  LIMIT :limit
+  OFFSET :offset;
+
+skills: |
+  SELECT
+      s.skill_record_id,
+      s.skill_name,
+      s.skill_category,
+      s.proficiency_level,
+      s.years_experience,
+      s.last_used_date,
+      s.is_primary_skill,
+      s.verified_by,
+
+      CONCAT(
+          verifier.first_name,
+          ' ',
+          verifier.last_name
+      ) AS verifier_name,
+
+      s.verification_date,
+      s.notes
+
+  FROM Skills AS s
+
+  LEFT JOIN Employee AS verifier
+      ON s.verified_by = verifier.employee_id
+
+  WHERE {where_clause}
+
+  ORDER BY
+      s.is_primary_skill DESC,
+      s.years_experience DESC,
+      s.skill_name
+
+  LIMIT :limit
+  OFFSET :offset;
+
+certifications: |
+  SELECT
+      c.certification_id,
+      c.certification_name,
+      c.issuing_organization,
+      c.credential_id,
+      c.issue_date,
+      c.expiry_date,
+      c.credential_url,
+      c.certification_status,
+      c.skill_category,
+      c.renewal_required,
+      c.renewal_status,
+      c.verification_date,
+      c.notes
+
+  FROM Certifications AS c
+
+  WHERE {where_clause}
+
+  ORDER BY
+      c.issue_date DESC,
+      c.certification_id DESC
+
+  LIMIT :limit
+  OFFSET :offset;

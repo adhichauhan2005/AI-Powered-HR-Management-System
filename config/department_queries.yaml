@@ -1,0 +1,53 @@
+get_all_departments: |
+  SELECT
+      d.department_id,
+      d.department_code,
+      d.department_name,
+      d.location,
+      d.annual_budget,
+      d.department_status,
+      COUNT(e.employee_id) AS employee_count
+  FROM Department AS d
+  LEFT JOIN Employee AS e
+      ON d.department_id = e.department_id
+  GROUP BY
+      d.department_id,
+      d.department_code,
+      d.department_name,
+      d.location,
+      d.annual_budget,
+      d.department_status
+  ORDER BY d.department_id;
+
+get_department_by_id: |
+  SELECT
+      d.department_id,
+      d.department_code,
+      d.department_name,
+      d.description,
+      d.location,
+      d.cost_center,
+      d.annual_budget,
+      d.phone_extension,
+      d.email_alias,
+      d.established_date,
+      d.department_status,
+
+      CONCAT(
+          manager.first_name,
+          ' ',
+          manager.last_name
+      ) AS manager_name,
+
+      (
+          SELECT COUNT(*)
+          FROM Employee AS employee
+          WHERE employee.department_id = d.department_id
+      ) AS employee_count
+
+  FROM Department AS d
+
+  LEFT JOIN Employee AS manager
+      ON d.manager_employee_id = manager.employee_id
+
+  WHERE d.department_id = :department_id;

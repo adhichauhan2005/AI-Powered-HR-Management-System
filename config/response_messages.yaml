@@ -1,0 +1,16 @@
+unknown:
+  general: >
+    I don't know based on the available HR database,
+    analytics functions, and policy documents.
+
+  sql: >
+    I could not confidently match this question to a supported
+    database query.
+
+  rag: >
+    I could not find relevant information in the available
+    HR policy documents.
+
+  analytics: >
+    I do not currently have an analytics function that supports
+    this question.
